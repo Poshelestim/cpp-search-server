@@ -2,7 +2,6 @@
 
 #include "tests.h"
 
-
 int main()
 {
     TestSearchServer();
