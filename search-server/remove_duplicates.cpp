@@ -4,23 +4,28 @@ using namespace std;
 
 void RemoveDuplicates(SearchServer &search_server)
 {
-    map<string, int> unique_docs = {};
+    vector<set<string>> unique_docs = {};
 
     vector<int> docs_to_delete = {};
 
     for (const int doc_id : search_server)
     {
-        string text = "";
+        set<string> text = {};
 
         for (const auto &[word, freq] :
              search_server.GetWordFrequencies(doc_id))
         {
-            text.append(word);
+            text.insert(word);
         }
 
-        if (unique_docs.count(text) == 0)
+        auto comparator = [&text](const set<string> &set_words)
         {
-            unique_docs[text] += doc_id;
+            return set_words == text;
+        };
+
+        if ( count_if(unique_docs.begin(), unique_docs.end(), comparator) == 0 )
+        {
+            unique_docs.push_back(text);
         }
         else
         {

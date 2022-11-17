@@ -28,7 +28,7 @@ void SearchServer::AddDocument(int document_id,
         document_to_word_freqs_[document_id][word] += inv_word_count;
     }
     documents_.emplace(document_id, DocumentData{ComputeAverageRating(ratings), status});
-    document_ids_.push_back(document_id);
+    document_ids_.insert(document_id);
 }
 
 
@@ -55,12 +55,12 @@ int SearchServer::GetDocumentCount() const
     return documents_.size();
 }
 
-std::vector<int>::iterator SearchServer::begin()
+std::set<int>::iterator SearchServer::begin()
 {
     return document_ids_.begin();
 }
 
-std::vector<int>::iterator SearchServer::end()
+std::set<int>::iterator SearchServer::end()
 {
     return document_ids_.end();
 }
@@ -117,24 +117,22 @@ void SearchServer::RemoveDocument(int document_id)
 {
     documents_.erase(document_id);
 
+    for (auto &[word, freqs] : GetWordFrequencies(document_id))
+    {
+        if (word_to_document_freqs_[word].count(document_id))
+        {
+            word_to_document_freqs_[word].erase(document_id);
+
+            if (word_to_document_freqs_[word].empty())
+            {
+                word_to_document_freqs_.erase(word);
+            }
+        }
+    }
+
     document_to_word_freqs_.erase(document_id);
 
-    for (auto &[word, freqs] : word_to_document_freqs_)
-    {
-        if (freqs.count(document_id))
-        {
-            freqs.erase(document_id);
-        }
-    }
-
-    for (size_t index = 0; index < document_ids_.size(); ++index)
-    {
-        if (document_ids_[index] == document_id)
-        {
-            document_ids_.erase(document_ids_.begin() + index);
-            break;
-        }
-    }
+    document_ids_.erase(document_id);
 }
 
 bool SearchServer::IsStopWord(const std::string& word) const
@@ -227,10 +225,8 @@ SearchServer::Query SearchServer::ParseQuery(const std::string& text) const
             {
                 result.minus_words.insert(query_word.data);
             }
-            else
-            {
-                result.plus_words.insert(query_word.data);
-            }
+
+            result.plus_words.insert(query_word.data);
         }
     }
     return result;
