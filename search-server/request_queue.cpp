@@ -11,9 +11,9 @@ std::vector<Document> RequestQueue::AddFindRequest(const std::string& raw_query,
                                                    DocumentStatus status)
 {
     return AddFindRequest(raw_query,
-                          [status](int document_id,
+                          [status](int  /*unused*/,
                           DocumentStatus document_status,
-                          int rating)
+                          int  /*unused*/)
     {
         return document_status == status;
     });

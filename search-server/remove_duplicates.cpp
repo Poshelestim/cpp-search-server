@@ -15,10 +15,10 @@ void RemoveDuplicates(SearchServer &search_server)
         for (const auto &[word, freq] :
              search_server.GetWordFrequencies(doc_id))
         {
-            text.insert(word);
+            text.insert(string{word});
         }
 
-        if ( unique_docs.count(text) )
+        if (unique_docs.count(text) != 0U)
         {
             docs_to_delete.push_back(doc_id);
         }
