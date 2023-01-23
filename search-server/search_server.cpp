@@ -47,7 +47,13 @@ SearchServer::FindTopDocuments(std::execution::sequenced_policy /*unused*/,
                                std::string_view raw_query,
                                DocumentStatus status) const
 {
-    return FindTopDocuments(raw_query, status);
+    return FindTopDocuments(raw_query,
+                            [status](int /*unused*/,
+                            DocumentStatus document_status,
+                            int /*unused*/)
+    {
+        return document_status == status;
+    });
 }
 
 std::vector<Document>
@@ -68,20 +74,14 @@ SearchServer::FindTopDocuments(std::execution::parallel_policy /*unused*/,
 std::vector<Document> SearchServer::FindTopDocuments(std::string_view raw_query,
                                                      DocumentStatus status) const
 {
-    return FindTopDocuments(raw_query,
-                            [status](int /*unused*/,
-                            DocumentStatus document_status,
-                            int /*unused*/)
-    {
-        return document_status == status;
-    });
+    return FindTopDocuments(std::execution::seq, raw_query, status);
 }
 
 std::vector<Document>
 SearchServer::FindTopDocuments(std::execution::sequenced_policy /*unused*/,
                                std::string_view raw_query) const
 {
-    return FindTopDocuments(raw_query, DocumentStatus::ACTUAL);
+    return FindTopDocuments(std::execution::seq, raw_query, DocumentStatus::ACTUAL);
 }
 
 std::vector<Document>
@@ -94,7 +94,7 @@ SearchServer::FindTopDocuments(std::execution::parallel_policy /*unused*/,
 std::vector<Document>
 SearchServer::FindTopDocuments(std::string_view raw_query) const
 {
-    return FindTopDocuments(raw_query, DocumentStatus::ACTUAL);
+    return FindTopDocuments(std::execution::seq, raw_query, DocumentStatus::ACTUAL);
 }
 
 int SearchServer::GetDocumentCount() const
