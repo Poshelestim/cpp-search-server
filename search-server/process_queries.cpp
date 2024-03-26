@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <execution>
-#include <numeric>
 
 std::vector<std::vector<Document> >
 ProcessQueries(const SearchServer &search_server,

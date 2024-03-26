@@ -11,7 +11,7 @@ std::string ReadLine()
 
 int ReadLineWithNumber()
 {
-    int result;
+    int result = 0;
     std::cin >> result;
     ReadLine();
     return result;
