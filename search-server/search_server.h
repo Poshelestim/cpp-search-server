@@ -156,7 +156,7 @@ private:
 
 template <typename stringContainer>
 SearchServer::SearchServer(const stringContainer &stop_words)
-    : stop_words_(MakeUniqueNonEmptyStrings(stop_words))  // Extract non-empty stop words
+    : stop_words_(MakeUniqueNonEmptyStrings(stop_words))
 {
     using namespace std::literals::string_literals;
     if (!all_of(stop_words_.begin(), stop_words_.end(), IsValidWord))

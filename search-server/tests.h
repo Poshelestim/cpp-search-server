@@ -2,7 +2,6 @@
 #define TESTS_H
 #pragma once
 
-
 void TestSearchServer();
 
 #endif // TESTS_H
